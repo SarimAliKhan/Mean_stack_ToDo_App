@@ -1,51 +1,44 @@
 const express = require("express");
+const router = express.Router();
 const Todo = require("../models/Todo");
 
-const router = express.Router();
+router.get("/todos/getAll", async(req, res) => {
+    const todoItem = await Todo.find();
+    res.json(todoItem);
+})
 
-// to get all the todos
-router.get("/todos", async (req, res) => {
-  const todos = await Todo.find();
-  res.json(todos);
+// Create a new todo item
+router.post("/todos/save", async (req, res) => {
+  const todoItem = new Todo(req.body);
+  await todoItem.save();
+
+  res.status(201).json(todoItem);
 });
 
-// to get a single todo
-router.get("/todo/:todoId", async (req, res) => {
-  const todo = await Todo.findById(req.params.todoId);
-  if (!todo) {
-    res.status(404).json({ message: "Todo not found" });
+// Mark a todo item as done 
+router.put("/todos/:todoId", async (req, res) => {
+  const todoItem = await Todo.findById(req.params.todoId);
+  if (!todoItem) {
+    res.status(404).json({ message: "Todo item not found" });
     return;
   }
-  res.json(todo);
+
+  todoItem.isDone = true;
+  await todoItem.save();
+
+  res.status(200).json(todoItem);
 });
 
-// to create a new todo
-router.post("/todo", async (req, res) => {
-  const todo = new Todo(req.body);
-  await todo.save();
-  res.status(201).json(todo);
-});
-
-// to update the todo
-router.put("/todo/:todoId", async (req, res) => {
-  const todo = await Todo.findById(req.params.todoId);
-  if (!todo) {
-    res.status(404).json({ message: "Todo not found" });
+// Delete a todo item
+router.delete("/todos/:todoId", async (req, res) => {
+  const todoItem = await Todo.findById(req.params.todoId);
+  if (!todoItem) {
+    res.status(404).json({ message: "Todo item not found" });
     return;
   }
-  todo.set(req.body);
-  await todo.save();
-  res.json(todo);
-});
 
-// to delete the todo
-router.delete("/todo/:todoId", async (req, res) => {
-  const todo = await Todo.findById(req.params.todoId);
-  if (!todo) {
-    res.status(404).json({ message: "Todo not found" });
-    return;
-  }
-  await todo.delete();
+  await todoItem.delete();
+
   res.sendStatus(204);
 });
 
