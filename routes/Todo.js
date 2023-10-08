@@ -26,7 +26,7 @@ router.put("/todos/:todoId", async (req, res) => {
   todoItem.isDone = true;
   await todoItem.save();
 
-  res.status(200).json(todoItem);
+  res.status(200).json({"isDone":todoItem.isDone});
 });
 
 // Delete a todo item
@@ -41,5 +41,26 @@ router.delete("/todos/:todoId", async (req, res) => {
 
   res.sendStatus(204);
 });
+
+router.post("/login", async (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+  
+    const user = await User.findOne({ username });
+    if (!user) {
+      res.status(401).json({ message: "Invalid username or password" });
+      return;
+    }
+  
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      res.status(401).json({ message: "Invalid username or password" });
+      return;
+    }
+  
+    const token = await generateJWTToken(user);
+    res.status(200).json({ token });
+  });
+  
 
 module.exports = router;
