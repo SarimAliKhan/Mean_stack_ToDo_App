@@ -30,16 +30,16 @@ router.put("/todos/:todoId", async (req, res) => {
 });
 
 // Delete a todo item
-router.delete("/todos/:todoId", async (req, res) => {
+router.delete("/todos/delete/:todoId", async (req, res) => {
   const todoItem = await Todo.findById(req.params.todoId);
   if (!todoItem) {
     res.status(404).json({ message: "Todo item not found" });
     return;
   }
 
-  await todoItem.delete();
+  await todoItem.deleteOne();
 
-  res.sendStatus(204);
+  res.sendStatus(200)
 });
 
 router.post("/login", async (req, res) => {
