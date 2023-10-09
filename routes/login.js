@@ -8,9 +8,10 @@ require("dotenv").config();
 
 // Login a user
 router.post("/login", async (req, res) => {
+  console.log('hello')
   const username = req.body.username;
   const password = req.body.password;
-
+  console.log(username,password)
   const user = await User.findOne({ username });
   if (!user) {
     res.status(401).json({ message: "Invalid username" });
@@ -22,7 +23,7 @@ router.post("/login", async (req, res) => {
     res.status(401).json({ message: "Invalid password" });
     return;
   }
-
+  console.log(token)
   const token = await generateJWTToken(user);
   res.status(200).json({ token });
 });
@@ -32,7 +33,7 @@ async function generateJWTToken(user) {
   const token = jwt.sign({
     id: user._id,
     username: user.username,
-  }, process.env.JWT_SECRET, {
+  }, "Sarimak28", {
     expiresIn: "1h",
   });
 
