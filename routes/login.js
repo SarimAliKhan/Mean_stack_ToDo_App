@@ -10,7 +10,7 @@ require("dotenv").config();
 router.post("/login", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-
+  console.log("here")
   const user = await User.findOne({ username });
   if (!user) {
     res.status(401).json({ message: "Invalid username" });
@@ -24,6 +24,7 @@ router.post("/login", async (req, res) => {
   }
 
   const token = await generateJWTToken(user);
+  console.log(token)
   res.status(200).json({ token });
 });
 
