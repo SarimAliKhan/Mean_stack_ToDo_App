@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 // Login a user
@@ -22,28 +21,8 @@ router.post("/login", async (req, res) => {
     return;
   }
 
-  // const token = await generateJWTToken(user);
   res.status(200).json({ status: true, loggedIn: true });
 });
 
-// Generate a JWT token for the user
-async function generateJWTToken(user) {
-  const token = jwt.sign(
-    {
-      id: user._id,
-      username: user.username,
-    },
-    "sarimak28",
-    {
-      algorithm: 'RS256',
-      expiresIn: "1h",
-    }, function(err, res) {
-      console.log(res)
-      console.log(err)
-    }
-  );
-
-  return token;
-}
 
 module.exports = router;
